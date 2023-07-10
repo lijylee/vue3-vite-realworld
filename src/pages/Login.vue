@@ -9,7 +9,9 @@
           </p>
 
           <ul class="error-messages">
-            <li>That email is already taken</li>
+            <template v-for="(messages,objKey) in errors" :key="objKey">
+              <li v-for="(msg,index) in messages" :key="index">{{objKey+': ' + msg }}</li>
+            </template>
           </ul>
 
           <form>
@@ -19,6 +21,7 @@
                 type="text"
                 placeholder="Email"
                 v-model="form.email"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -27,6 +30,7 @@
                 type="password"
                 placeholder="Password"
                 v-model="form.password"
+                required
               />
             </fieldset>
             <button
@@ -42,7 +46,7 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { login } from '../controller/user';
 import { saveUserToStorage } from '../utils/storage';
@@ -52,11 +56,15 @@ const form = reactive({
   email: '',
   password: '',
 });
+let errors = ref(null);
 const handleLogin = async (form) => {
-  const { successLogin, user } = await login(form);
-  if (successLogin) {
-    saveUserToStorage(user);
+  try {
+    const { data } = await login(form);
+    console.log({ data });
+    saveUserToStorage(data.user);
     router.push('/');
+  } catch (error) {
+    errors.value = error.response.data.errors;
   }
 };
 </script>

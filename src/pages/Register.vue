@@ -19,6 +19,7 @@
                 type="text"
                 placeholder="Your Name"
                 v-model="form.username"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -27,6 +28,7 @@
                 type="text"
                 placeholder="Email"
                 v-model="form.email"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -35,6 +37,7 @@
                 type="password"
                 placeholder="Password"
                 v-model="form.password"
+                required
               />
             </fieldset>
             <button
