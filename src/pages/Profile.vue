@@ -4,8 +4,8 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img" />
-            <h4>Eric Simons</h4>
+            <img :src="profile.image" class="user-img" />
+            <h4>{{ profile.username }}</h4>
             <p>
               Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from
               the Hunger Games
@@ -83,6 +83,19 @@
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router';
+import { getProfile } from '../controller/profile';
+import { reactive } from 'vue';
+
+const route = useRoute();
+const username = route.params.username;
+let profile = reactive(null);
+try {
+  const { data } = await getProfile(username);
+  profile = reactive(data.profile);
+} catch (error) {
+  console.log(error);
+}
 </script>
 
 <style scoped>

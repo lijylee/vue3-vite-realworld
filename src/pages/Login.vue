@@ -60,7 +60,6 @@ let errors = ref(null);
 const handleLogin = async (form) => {
   try {
     const { data } = await login(form);
-    console.log({ data });
     saveUserToStorage(data.user);
     router.push('/');
   } catch (error) {
