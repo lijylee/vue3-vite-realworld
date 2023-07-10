@@ -15,6 +15,26 @@ const routes = [
         path: '',
         component: Home,
         name: 'Home'
+      },
+      {
+        path: '/profile',
+        component: () => import(/* webpackChunkName: "profile" */ '../pages/Profile.vue'),
+        name: 'Profile'
+      },
+      {
+        path: '/settings',
+        component: () => import(/* webpackChunkName: "settings" */ '../pages/Settings.vue'),
+        name: 'Settings'
+      },
+      {
+        path: '/editor',
+        component: () => import(/* webpackChunkName: "editor" */ '../pages/Editor.vue'),
+        name: 'Editor'
+      },
+      {
+        path: '/article',
+        component: () => import(/* webpackChunkName: "article" */ '../pages/Article.vue'),
+        name: 'Article'
       }
     ],
   },
@@ -23,7 +43,6 @@ const routes = [
     component: Login,
     name: 'Login'
   },
-  ,
   {
     path: '/register',
     component: Register,

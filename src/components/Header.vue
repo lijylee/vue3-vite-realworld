@@ -4,31 +4,30 @@
       <a class="navbar-brand" href="index.html">conduit</a>
       <ul class="nav navbar-nav pull-xs-right">
         <li class="nav-item">
-          <!-- Add "active" class when you're on that page" -->
-          <a class="nav-link active" href="/">Home</a>
+          <router-link to="/" class="nav-link active">Home</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/login" v-show="!isLogin">Sign in</a>
+          <router-link class="nav-link" to="/login" v-show="!isLogin">Sign in</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/register" v-show="!isLogin">Sign up</a>
+          <router-link class="nav-link" to="/register" v-show="!isLogin">Sign up</router-link>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href>
+          <router-link class="nav-link" to="/editor">
             <i class="ion-compose"></i>&nbsp;New Article
-          </a>
+          </router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href>
+          <router-link class="nav-link" to="/settings">
             <i class="ion-gear-a"></i>&nbsp;Settings
-          </a>
+          </router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href>
+          <router-link class="nav-link" to="/profile">
             <img :src="user.image" class="user-pic" />
             {{ user.username}}
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>
