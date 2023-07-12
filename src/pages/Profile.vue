@@ -12,7 +12,7 @@
             </p>
             <button class="btn btn-sm btn-outline-secondary action-btn">
               <i class="ion-plus-round"></i>
-              &nbsp; Follow Eric Simons
+              &nbsp; Follow {{ profile.username }}
             </button>
           </div>
         </div>
@@ -83,19 +83,13 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { getProfile } from '../controller/profile';
-import { reactive } from 'vue';
+import { useProfile } from '../composable/useProfile';
 
 const route = useRoute();
-const username = route.params.username;
-let profile = reactive(null);
-try {
-  const { data } = await getProfile(username);
-  profile = reactive(data.profile);
-} catch (error) {
-  console.log(error);
-}
+const username = ref(route.params.username);
+const { profile } = useProfile(username);
 </script>
 
 <style scoped>

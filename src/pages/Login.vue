@@ -48,7 +48,7 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { login } from '../controller/user';
+import { login } from '../api/user';
 import { saveUserToStorage } from '../utils/storage';
 const router = useRouter();
 

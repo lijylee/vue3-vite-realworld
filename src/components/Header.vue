@@ -24,7 +24,7 @@
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/profile">
+          <router-link class="nav-link" :to="{name:'Profile',params:{username:user.username}}">
             <img :src="user.image" class="user-pic" />
             {{ user.username}}
           </router-link>
@@ -39,7 +39,6 @@ import { ref } from 'vue';
 import { getUserFromStorage } from '../utils/storage';
 let isLogin = ref(false);
 const user = ref(getUserFromStorage());
-console.log({ user });
 
 if (user) {
   isLogin = true;
