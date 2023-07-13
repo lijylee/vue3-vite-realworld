@@ -1,5 +1,5 @@
 import { ref, watch } from 'vue';
-import { getProfile } from '../api/profile';
+import { getProfile } from '@/api/profile';
 
 export function useProfile(username) {
   let profile = ref({});

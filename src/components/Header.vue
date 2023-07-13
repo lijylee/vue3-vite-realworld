@@ -36,7 +36,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { getUserFromStorage } from '../utils/storage';
+import { getUserFromStorage } from '@/utils/storage';
 let isLogin = ref(false);
 const user = ref(getUserFromStorage());
 

@@ -1,9 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import { getUserFromStorage } from '../utils/storage';
-import Layout from '../components/Layout.vue';
-import Home from '../pages/Home.vue';
-import Login from '../pages/Login.vue';
-import Register from '../pages/Register.vue';
+import { getUserFromStorage } from '@/utils/storage';
+import Layout from '@/components/Layout.vue';
+import Home from '@/pages/Home.vue';
+import Login from '@/pages/Login.vue';
+import Register from '@/pages/Register.vue';
 
 const routes = [
   {
@@ -18,22 +18,22 @@ const routes = [
       },
       {
         path: '/profile/:username',
-        component: () => import(/* webpackChunkName: "profile" */ '../pages/Profile.vue'),
+        component: () => import(/* webpackChunkName: "profile" */ '@/pages/Profile.vue'),
         name: 'Profile'
       },
       {
         path: '/settings',
-        component: () => import(/* webpackChunkName: "settings" */ '../pages/Settings.vue'),
+        component: () => import(/* webpackChunkName: "settings" */ '@/pages/Settings.vue'),
         name: 'Settings'
       },
       {
         path: '/editor',
-        component: () => import(/* webpackChunkName: "editor" */ '../pages/Editor.vue'),
+        component: () => import(/* webpackChunkName: "editor" */ '@/pages/Editor.vue'),
         name: 'Editor'
       },
       {
         path: '/article',
-        component: () => import(/* webpackChunkName: "article" */ '../pages/Article.vue'),
+        component: () => import(/* webpackChunkName: "article" */ '@/pages/Article.vue'),
         name: 'Article'
       }
     ],

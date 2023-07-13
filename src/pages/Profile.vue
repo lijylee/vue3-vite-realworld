@@ -85,7 +85,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useProfile } from '../composable/useProfile';
+import { useProfile } from '@/composable/useProfile';
 
 const route = useRoute();
 const username = ref(route.params.username);
