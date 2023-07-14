@@ -61,7 +61,7 @@ const handleLogin = async (form) => {
   try {
     const { data } = await login(form);
     saveUserToStorage(data.user);
-    router.push('/');
+    router.push({ name: 'Home', query: { feed: 'GlobalFeed' } });
   } catch (error) {
     errors.value = error.response.data.errors;
   }
