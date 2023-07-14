@@ -6,13 +6,10 @@
           <div class="col-xs-12 col-md-10 offset-md-1">
             <img :src="profile.image" class="user-img" />
             <h4>{{ profile.username }}</h4>
-            <p>
-              Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from
-              the Hunger Games
-            </p>
-            <button class="btn btn-sm btn-outline-secondary action-btn">
+            <p>{{ profile.bio }}</p>
+            <button class="btn btn-sm btn-outline-secondary action-btn" @click="handleEditFollow">
               <i class="ion-plus-round"></i>
-              &nbsp; Follow {{ profile.username }}
+              &nbsp; {{ isMe ? 'Edit Profile Settings' :'Follow ' + profile.username }}
             </button>
           </div>
         </div>
@@ -83,13 +80,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useProfile } from '@/composable/useProfile';
+import { getUserFromStorage } from '@/utils/storage';
 
 const route = useRoute();
+const router = useRouter();
 const username = ref(route.params.username);
 const { profile } = useProfile(username);
+const user = getUserFromStorage();
+const isMe = computed(() => user && user.username === profile.value.username);
+const handleEditFollow = () => {
+  if (isMe) {
+    return router.push('/settings');
+  }
+  // TODO: Follow user
+};
 </script>
 
 <style scoped>

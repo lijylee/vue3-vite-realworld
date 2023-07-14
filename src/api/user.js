@@ -6,12 +6,20 @@ const login = user => {
   });
 };
 
-const register = async (user) => {
+const register = user => {
   return request.post('/users', {
     'user': user
   });
 };
+
+const updateUser = user => {
+  return request.put('/user', {
+    'user': user
+  });
+};
+
 export {
   login,
-  register
+  register,
+  updateUser
 };
