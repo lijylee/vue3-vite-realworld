@@ -48,13 +48,14 @@
                 />
               </fieldset>
               <button
+                type="button"
                 class="btn btn-lg btn-primary pull-xs-right"
                 @click="handleUpdateUser(user)"
               >Update Settings</button>
             </fieldset>
           </form>
           <hr />
-          <button class="btn btn-outline-danger">Or click here to logout.</button>
+          <button class="btn btn-outline-danger" @click="handleLogout">Or click here to logout.</button>
         </div>
       </div>
     </div>
@@ -63,7 +64,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { getUserFromStorage } from '@/utils/storage.js';
+import { getUserFromStorage, removeUserFromStorage } from '@/utils/storage.js';
 import { updateUser } from '@/api/user.js';
 import { saveUserToStorage } from '@/utils/storage.js';
 import { useRouter } from 'vue-router';
@@ -76,6 +77,10 @@ const handleUpdateUser = (user) => {
     saveUserToStorage(user);
     router.push(`/profile/${user.username}`);
   });
+};
+const handleLogout = () => {
+  removeUserFromStorage();
+  router.push('/login');
 };
 </script>
 
