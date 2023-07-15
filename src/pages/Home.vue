@@ -17,16 +17,23 @@
                   <!-- <a class="nav-link disabled" href>Your Feed</a> -->
                   <router-link
                     class="nav-link"
-                    :class="{disabled: feedDisable}"
+                    :class="{disabled: feedDisable, active: !tag && feed === 'YourFeed'}"
                     :to="{name:'Home',query:{feed:'YourFeed'}}"
                   >Your Feed</router-link>
                 </li>
                 <li class="nav-item">
                   <router-link
                     class="nav-link"
-                    :class="{disabled: feedDisable}"
+                    :class="{disabled: feedDisable, active: !tag && feed === 'GlobalFeed'}"
                     :to="{name:'Home',query:{feed:'GlobalFeed'}}"
                   >Global Feed</router-link>
+                </li>
+                <li class="nav-item" v-if="tag">
+                  <router-link
+                    class="nav-link"
+                    :class="{disabled: feedDisable, active: tag}"
+                    :to="{name:'Home',query:{'tag':tag}}"
+                  >{{ tag }}</router-link>
                 </li>
               </ul>
             </div>
@@ -61,19 +68,34 @@
           <div class="col-md-3">
             <div class="sidebar">
               <p>Popular Tags</p>
-
               <div class="tag-list">
-                <a href class="tag-pill tag-default">programming</a>
-                <a href class="tag-pill tag-default">javascript</a>
-                <a href class="tag-pill tag-default">emberjs</a>
-                <a href class="tag-pill tag-default">angularjs</a>
-                <a href class="tag-pill tag-default">react</a>
-                <a href class="tag-pill tag-default">mean</a>
-                <a href class="tag-pill tag-default">node</a>
-                <a href class="tag-pill tag-default">rails</a>
+                <router-link
+                  v-for="tag in tags"
+                  :to="{name:'Home',query:{'tag':tag}}"
+                  class="tag-pill tag-default"
+                >{{ tag }}</router-link>
               </div>
             </div>
           </div>
+
+          <nav>
+            <ul class="pagination">
+              <li
+                class="page-item"
+                v-for="count in articlesCount"
+                :class="{ active: page === count }"
+              >
+                <router-link
+                  class="page-link ng-binding"
+                  :to="{name:'Home',query:{
+                  feed,
+                  tag,
+                  page:count
+                }}"
+                >{{ count }}</router-link>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
@@ -81,25 +103,42 @@
 </template>
 
 <script setup>
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useArticle } from '@/composable/useArticle.js';
-import { ref, watch } from 'vue';
+import { getTags } from '@/api/tag.js';
 
 const route = useRoute();
 const feedDisable = ref(false);
+const tags = ref([]);
+getTags().then(({ data }) => {
+  tags.value = data.tags;
+});
+const tag = computed(() => route.query.tag || undefined);
+const feed = computed(() => route.query.feed || 'GlobalFeed');
+const page = computed(() => Number(route.query.page) || 1);
+const { articles, articlesCount, fetchArticles, fetchFeedArticles } =
+  useArticle();
 
-const { articles, fetchArticles, fetchFeedArticles } = useArticle();
 watch(
-  () => route.query.feed,
+  () => route.query,
   (newValue, oldValue) => {
     if (newValue === oldValue) {
       return;
     }
     feedDisable.value = true;
-    const fetchFn = newValue === 'YourFeed' ? fetchFeedArticles : fetchArticles;
-    fetchFn().then(() => {
+    let params = {
+      tag: tag.value,
+      offset: page.value,
+    };
+    const fetchFn =
+      newValue.feed === 'YourFeed' ? fetchFeedArticles : fetchArticles;
+    fetchFn(params).then(() => {
       feedDisable.value = false;
     });
+  },
+  {
+    immediate: true,
   }
 );
 </script>

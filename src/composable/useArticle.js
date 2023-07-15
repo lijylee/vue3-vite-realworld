@@ -3,15 +3,16 @@ import { getArticles, getFeedArticles } from '@/api/article.js';
 
 export function useArticle() {
   const articles = ref([]);
+  const articlesCount = ref(0);
   const fetchArticles = async (params) => {
     try {
       const { data } = await getArticles(params);
       articles.value = data.articles;
+      articlesCount.value = data.articlesCount;
     } catch (error) {
       console.log(error);
     }
   };
-  fetchArticles();
 
   const fetchFeedArticles = async (params) => {
     try {
@@ -24,6 +25,7 @@ export function useArticle() {
 
   return {
     articles,
+    articlesCount,
     fetchArticles,
     fetchFeedArticles
   };
