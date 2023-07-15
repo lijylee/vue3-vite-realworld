@@ -117,6 +117,7 @@ getTags().then(({ data }) => {
 const tag = computed(() => route.query.tag || undefined);
 const feed = computed(() => route.query.feed || 'GlobalFeed');
 const page = computed(() => Number(route.query.page) || 1);
+const limit = computed(() => Number(route.query.limit) || 10);
 const { articles, articlesCount, fetchArticles, fetchFeedArticles } =
   useArticle();
 
@@ -129,7 +130,7 @@ watch(
     feedDisable.value = true;
     let params = {
       tag: tag.value,
-      offset: page.value,
+      offset: (page.value - 1) * limit.value,
     };
     const fetchFn =
       newValue.feed === 'YourFeed' ? fetchFeedArticles : fetchArticles;
