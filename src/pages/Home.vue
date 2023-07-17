@@ -80,17 +80,14 @@
 
           <nav>
             <ul class="pagination">
-              <li
-                class="page-item"
-                v-for="count in articlesCount"
-                :class="{ active: page === count }"
-              >
+              <li class="page-item" v-for="count in totalPage" :class="{ active: page === count }">
                 <router-link
                   class="page-link ng-binding"
                   :to="{name:'Home',query:{
                   feed,
                   tag,
-                  page:count
+                  page:count,
+                  limit
                 }}"
                 >{{ count }}</router-link>
               </li>
@@ -103,7 +100,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useArticle } from '@/composable/useArticle.js';
 import { getTags } from '@/api/tag.js';
@@ -118,30 +115,14 @@ const tag = computed(() => route.query.tag || undefined);
 const feed = computed(() => route.query.feed || 'GlobalFeed');
 const page = computed(() => Number(route.query.page) || 1);
 const limit = computed(() => Number(route.query.limit) || 10);
-const { articles, articlesCount, fetchArticles, fetchFeedArticles } =
-  useArticle();
-
-watch(
-  () => route.query,
-  (newValue, oldValue) => {
-    if (newValue === oldValue) {
-      return;
-    }
-    feedDisable.value = true;
-    let params = {
-      tag: tag.value,
-      offset: (page.value - 1) * limit.value,
-    };
-    const fetchFn =
-      newValue.feed === 'YourFeed' ? fetchFeedArticles : fetchArticles;
-    fetchFn(params).then(() => {
-      feedDisable.value = false;
-    });
-  },
-  {
-    immediate: true,
-  }
-);
+const { articles, articlesCount } = useArticle({
+  tag,
+  feed,
+  page,
+  limit,
+  feedDisable,
+});
+const totalPage = computed(() => Math.ceil(articlesCount.value / limit.value));
 </script>
 
 <style scoped>
