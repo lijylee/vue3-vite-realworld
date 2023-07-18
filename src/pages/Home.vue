@@ -49,7 +49,7 @@
                       :to="{ name:'Profile',params:{ username:article.author.username } }"
                       class="author"
                     >{{ article.author.username }}</router-link>
-                    <span class="date">{{ article.createdAt }}</span>
+                    <span class="date">{{ dateFormat(article.createdAt) }}</span>
                   </div>
                   <button class="btn btn-outline-primary btn-sm pull-xs-right">
                     <i class="ion-heart"></i>
@@ -102,6 +102,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import dayjs from 'dayjs';
 import { useArticle } from '@/composable/useArticle.js';
 import { getTags } from '@/api/tag.js';
 
@@ -123,6 +124,7 @@ const { articles, articlesCount } = useArticle({
   feedDisable,
 });
 const totalPage = computed(() => Math.ceil(articlesCount.value / limit.value));
+const dateFormat = (str) => dayjs(str).format('MMMM D,YYYY');
 </script>
 
 <style scoped>
