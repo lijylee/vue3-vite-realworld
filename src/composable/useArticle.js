@@ -8,6 +8,9 @@ export function useArticle({ tag, feed, page, limit, feedDisable }) {
     try {
       const { data } = await getArticles(params);
       articles.value = data.articles;
+      articles.value.forEach((element) => {
+        element.disabled = false;
+      });
       articlesCount.value = data.articlesCount;
     } catch (error) {
       console.log(error);
@@ -17,8 +20,10 @@ export function useArticle({ tag, feed, page, limit, feedDisable }) {
   const fetchFeedArticles = async (params) => {
     try {
       const { data } = await getFeedArticles(params);
-      console.log(data);
       articles.value = data.articles;
+      articles.value.forEach((element) => {
+        element.disabled = false;
+      });
       articlesCount.value = data.articlesCount;
     } catch (error) {
       console.log(error);

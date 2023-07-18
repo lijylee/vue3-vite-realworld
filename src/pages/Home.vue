@@ -51,7 +51,12 @@
                     >{{ article.author.username }}</router-link>
                     <span class="date">{{ dateFormat(article.createdAt) }}</span>
                   </div>
-                  <button class="btn btn-outline-primary btn-sm pull-xs-right">
+                  <button
+                    class="btn btn-sm pull-xs-right"
+                    :class="[article.favorited ? 'btn-primary':'btn-outline-primary']"
+                    :disabled="article.disabled"
+                    @click="handleFavorite(article)"
+                  >
                     <i class="ion-heart"></i>
                     {{ article.favoritesCount }}
                   </button>
@@ -105,6 +110,7 @@ import { useRoute } from 'vue-router';
 import dayjs from 'dayjs';
 import { useArticle } from '@/composable/useArticle.js';
 import { getTags } from '@/api/tag.js';
+import { postFavorites, deleteFavorites } from '@/api/favorites.js';
 
 const route = useRoute();
 const feedDisable = ref(false);
@@ -125,6 +131,15 @@ const { articles, articlesCount } = useArticle({
 });
 const totalPage = computed(() => Math.ceil(articlesCount.value / limit.value));
 const dateFormat = (str) => dayjs(str).format('MMMM D,YYYY');
+const handleFavorite = async (article) => {
+  const index = articles.value.findIndex((item) => item === article);
+  articles.value[index].disabled = true;
+  const { data } = article.favorited
+    ? await deleteFavorites(article.slug)
+    : await postFavorites(article.slug);
+  articles.value[index] = data.article;
+  articles.value[index].disabled = false;
+};
 </script>
 
 <style scoped>
