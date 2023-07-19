@@ -22,7 +22,7 @@ const routes = [
         name: 'Home'
       },
       {
-        path: '/profile/:username',
+        path: '/profile/:username?',
         component: () => import(/* webpackChunkName: "profile" */ '@/pages/Profile.vue'),
         name: 'Profile'
       },
@@ -37,7 +37,7 @@ const routes = [
         name: 'Editor'
       },
       {
-        path: '/article',
+        path: '/article/:slug',
         component: () => import(/* webpackChunkName: "article" */ '@/pages/Article.vue'),
         name: 'Article'
       }

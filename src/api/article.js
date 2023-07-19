@@ -11,3 +11,7 @@ export function getFeedArticles(params) {
     params
   });
 }
+
+export function getArticle(slug) {
+  return request.get(`/articles/${slug}`);
+}

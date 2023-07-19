@@ -61,11 +61,11 @@
                     {{ article.favoritesCount }}
                   </button>
                 </div>
-                <a href class="preview-link">
+                <router-link :to="{name:'Article',params:{slug:article.slug}}" class="preview-link">
                   <h1>{{ article.title }}</h1>
                   <p>{{ article.description }}</p>
                   <span>Read more...</span>
-                </a>
+                </router-link>
               </div>
             </template>
           </div>
@@ -107,8 +107,8 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import dayjs from 'dayjs';
-import { useArticle } from '@/composable/useArticle.js';
+import { dateFormat } from '@/utils/format.js';
+import { useArticles } from '@/composable/useArticles.js';
 import { getTags } from '@/api/tag.js';
 import { postFavorites, deleteFavorites } from '@/api/favorites.js';
 
@@ -122,7 +122,7 @@ const tag = computed(() => route.query.tag || undefined);
 const feed = computed(() => route.query.feed || 'GlobalFeed');
 const page = computed(() => Number(route.query.page) || 1);
 const limit = computed(() => Number(route.query.limit) || 10);
-const { articles, articlesCount } = useArticle({
+const { articles, articlesCount } = useArticles({
   tag,
   feed,
   page,
@@ -130,7 +130,6 @@ const { articles, articlesCount } = useArticle({
   feedDisable,
 });
 const totalPage = computed(() => Math.ceil(articlesCount.value / limit.value));
-const dateFormat = (str) => dayjs(str).format('MMMM D,YYYY');
 const handleFavorite = async (article) => {
   const index = articles.value.findIndex((item) => item === article);
   articles.value[index].disabled = true;

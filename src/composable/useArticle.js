@@ -1,59 +1,27 @@
 import { ref, watch } from 'vue';
-import { getArticles, getFeedArticles } from '@/api/article.js';
+import { marked } from 'marked';
+import { mangle } from "marked-mangle";
+import { getArticle } from '@/api/article.js';
 
-export function useArticle({ tag, feed, page, limit, feedDisable }) {
-  const articles = ref([]);
-  const articlesCount = ref(0);
-  const fetchArticles = async (params) => {
+export default function useArticle(slug) {
+  const article = ref({ author: { username: '' } });
+  const articleContent = ref('');
+  const fetchArticle = async slug => {
     try {
-      const { data } = await getArticles(params);
-      articles.value = data.articles;
-      articles.value.forEach((element) => {
-        element.disabled = false;
-      });
-      articlesCount.value = data.articlesCount;
+      const { data } = await getArticle(slug.value);
+      article.value = data.article;
+      marked.use(mangle());
+      articleContent.value = marked.parse(data.article.body);
     } catch (error) {
       console.log(error);
     }
   };
-
-  const fetchFeedArticles = async (params) => {
-    try {
-      const { data } = await getFeedArticles(params);
-      articles.value = data.articles;
-      articles.value.forEach((element) => {
-        element.disabled = false;
-      });
-      articlesCount.value = data.articlesCount;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const generateParams = () => {
-    return {
-      tag: tag.value,
-      offset: (page.value - 1) * limit.value,
-    };
-  };
-
-  const doFetchArticles = () => {
-    const params = generateParams();
-    const fetchFn = feed.value === 'YourFeed' ? fetchFeedArticles : fetchArticles;
-    feedDisable.value = true;
-    fetchFn(params).then(() => {
-      feedDisable.value = false;
-    });
-  };
-
-  watch(feed, doFetchArticles, { immediate: true });
-  watch(page, doFetchArticles, { immediate: true });
-  watch(tag, doFetchArticles, { immediate: true });
-  watch(limit, doFetchArticles, { immediate: true });
-
+  watch(slug, () => {
+    fetchArticle(slug);
+  }, { immediate: true });
   return {
-    articles,
-    articlesCount
+    article,
+    articleContent,
+    fetchArticle
   };
 }
-

@@ -2,63 +2,24 @@
   <div class="article-page">
     <div class="banner">
       <div class="container">
-        <h1>How to build webapps that scale</h1>
-
-        <div class="article-meta">
-          <a href>
-            <img src="http://i.imgur.com/Qr71crq.jpg" />
-          </a>
-          <div class="info">
-            <a href class="author">Eric Simons</a>
-            <span class="date">January 20th</span>
-          </div>
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-plus-round"></i>
-            &nbsp; Follow Eric Simons
-            <span class="counter">(10)</span>
-          </button>
-          &nbsp;&nbsp;
-          <button class="btn btn-sm btn-outline-primary">
-            <i class="ion-heart"></i>
-            &nbsp; Favorite Post
-            <span class="counter">(29)</span>
-          </button>
-        </div>
+        <h1>{{ article.title }}</h1>
+        <ArticleMeta :article="article" />
       </div>
     </div>
 
     <div class="container page">
       <div class="row article-content">
-        <div class="col-md-12">
-          <p>Web development technologies have evolved at an incredible clip over the past few years.</p>
-          <h2 id="introducing-ionic">Introducing RealWorld.</h2>
-          <p>It's a great solution for learning how other frameworks work.</p>
-        </div>
+        <div class="col-md-12" v-html="articleContent"></div>
       </div>
+      <ul class="tag-list">
+        <!-- ngRepeat: tag in ::$ctrl.article.tagList -->
+        <li v-for="tag in article.tagList" class="tag-default tag-pill tag-outline">{{ tag }}</li>
+      </ul>
 
       <hr />
 
       <div class="article-actions">
-        <div class="article-meta">
-          <a href="profile.html">
-            <img src="http://i.imgur.com/Qr71crq.jpg" />
-          </a>
-          <div class="info">
-            <a href class="author">Eric Simons</a>
-            <span class="date">January 20th</span>
-          </div>
-
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-plus-round"></i>
-            &nbsp; Follow Eric Simons
-          </button>
-          &nbsp;
-          <button class="btn btn-sm btn-outline-primary">
-            <i class="ion-heart"></i>
-            &nbsp; Favorite Article
-            <span class="counter">(29)</span>
-          </button>
-        </div>
+        <ArticleMeta :article="article" />
       </div>
 
       <div class="row">
@@ -115,6 +76,16 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { dateFormat } from '@/utils/format.js';
+import ArticleMeta from '../components/ArticleMeta.vue';
+import useArticle from '../composable/useArticle';
+
+const route = useRoute();
+
+const slug = computed(() => route.params.slug);
+const { article, articleContent } = useArticle(slug);
 </script>
 
 <style scoped>
