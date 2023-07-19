@@ -9,7 +9,7 @@
             <p>{{ profile.bio }}</p>
             <button class="btn btn-sm btn-outline-secondary action-btn" @click="handleEditFollow">
               <i class="ion-plus-round"></i>
-              &nbsp; {{ isMe ? 'Edit Profile Settings' :'Follow ' + profile.username }}
+              &nbsp; {{ isMe ? 'Edit Profile Settings' : ((following ? 'UnFollow ' : 'Follow ') + profile.username) }}
             </button>
           </div>
         </div>
@@ -88,14 +88,17 @@ import { getUserFromStorage } from '@/utils/storage';
 const route = useRoute();
 const router = useRouter();
 const username = ref(route.params.username);
-const { profile } = useProfile(username);
+const { profile, following, handleFollowUser, handleUnFollowUser } =
+  useProfile(username);
 const user = getUserFromStorage();
 const isMe = computed(() => user && user.username === profile.value.username);
 const handleEditFollow = () => {
-  if (isMe) {
+  if (isMe.value) {
     return router.push('/settings');
+  } else {
+    const fn = following.value ? handleUnFollowUser : handleFollowUser;
+    fn(username.value);
   }
-  // TODO: Follow user
 };
 </script>
 
