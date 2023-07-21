@@ -4,9 +4,11 @@ export function getComments(slug) {
   return request.get(`/articles/${slug}/comments`);
 }
 
-export function createComment(slug, comment) {
+export function createComment(slug, commentBody) {
   return request.post(`/articles/${slug}/comments`, {
-    comment
+    comment: {
+      body: commentBody
+    }
   });
 }
 

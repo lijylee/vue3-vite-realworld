@@ -11,8 +11,9 @@
           ></textarea>
         </div>
         <div class="card-footer">
-          <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
+          <img :src="userImage" class="comment-author-img" />
           <button
+            type="button"
             class="btn btn-sm btn-primary"
             @click="handleCreateComment(slug, comment)"
           >Post Comment</button>
@@ -30,6 +31,13 @@
           &nbsp;
           <a href class="comment-author">{{ comment.author.username }}</a>
           <span class="date-posted">{{ dateFormat(comment.updatedAt) }}</span>
+          <span
+            class="mod-options"
+            v-if="user.username === comment.author.username"
+            @click="handleDeleteComment(slug, comment.id)"
+          >
+            <i class="ion-trash-a"></i>
+          </span>
         </div>
       </div>
     </div>
@@ -38,11 +46,18 @@
 
 <script setup>
 import { ref } from 'vue';
+import { getUserFromStorage } from '@/utils/storage.js';
 import { dateFormat } from '@/utils/format.js';
-import { getComments, createComment } from '@/api/comment.js';
+import { getComments, createComment, deleteComment } from '@/api/comment.js';
 const { slug } = defineProps(['slug']);
 
+const user = getUserFromStorage();
+const userImage = user?.image;
+
 const comments = ref([]);
+// 获取文章所有评论
+handleGetComments(slug);
+
 async function handleGetComments(slug) {
   try {
     const { data } = await getComments(slug);
@@ -52,13 +67,22 @@ async function handleGetComments(slug) {
   }
 }
 
-// 获取文章所有评论
-handleGetComments(slug);
-
 const comment = ref('');
 async function handleCreateComment(slug, comment) {
   try {
-    await createComment(slug, comment);
+    const { data } = await createComment(slug, comment);
+    const { comment: resComment } = data;
+    comments.value.push(resComment);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function handleDeleteComment(slug, id) {
+  try {
+    await deleteComment(slug, id);
+    const index = comments.value.findIndex((item) => item.id === id);
+    comments.value.splice(index, 1);
   } catch (error) {
     console.log(error);
   }
