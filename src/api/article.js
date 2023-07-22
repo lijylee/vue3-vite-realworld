@@ -15,3 +15,13 @@ export function getFeedArticles(params) {
 export function getArticle(slug) {
   return request.get(`/articles/${slug}`);
 }
+
+export function createArticle(article) {
+  return request.post(`/articles`, {
+    article
+  });
+}
+
+export function deleteArticle(slug) {
+  return request.delete(`/articles/${slug}`);
+}
