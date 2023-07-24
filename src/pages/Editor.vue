@@ -105,7 +105,7 @@ function handleOperateArticle() {
   if (slug.value) {
     handleUpdateArticle();
   } else {
-    handleCreateArticle;
+    handleCreateArticle();
   }
 }
 

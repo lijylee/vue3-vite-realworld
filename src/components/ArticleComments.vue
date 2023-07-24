@@ -15,7 +15,7 @@
           <button
             type="button"
             class="btn btn-sm btn-primary"
-            @click="handleCreateComment(slug, comment)"
+            @click="handleCreateComment(slug)"
           >Post Comment</button>
         </div>
       </form>
@@ -68,11 +68,12 @@ async function handleGetComments(slug) {
 }
 
 const comment = ref('');
-async function handleCreateComment(slug, comment) {
+async function handleCreateComment(slug) {
   try {
-    const { data } = await createComment(slug, comment);
+    const { data } = await createComment(slug, comment.value);
     const { comment: resComment } = data;
     comments.value.push(resComment);
+    comment.value = '';
   } catch (error) {
     console.log(error);
   }
