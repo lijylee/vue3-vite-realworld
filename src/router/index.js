@@ -32,7 +32,7 @@ const routes = [
         name: 'Settings'
       },
       {
-        path: '/editor',
+        path: '/editor/:slug?',
         component: () => import(/* webpackChunkName: "editor" */ '@/pages/Editor.vue'),
         name: 'Editor'
       },

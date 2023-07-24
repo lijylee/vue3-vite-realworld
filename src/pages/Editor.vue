@@ -47,7 +47,7 @@
               <button
                 class="btn btn-lg pull-xs-right btn-primary"
                 type="button"
-                @click="handleCreateArticle"
+                @click="handleOperateArticle"
               >Publish Article</button>
             </fieldset>
           </form>
@@ -58,11 +58,12 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
-import { createArticle } from '@/api/article.js';
-import { useRouter } from 'vue-router';
+import { reactive, ref, computed } from 'vue';
+import { getArticle, createArticle, updateArticle } from '@/api/article.js';
+import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
 
 const article = reactive({
   title: '',
@@ -70,6 +71,16 @@ const article = reactive({
   body: '',
   tagList: [],
 });
+const slug = computed(() => route.params.slug);
+if (slug.value) {
+  getArticle(slug.value).then(({ data }) => {
+    const editorArticle = data.article;
+    article.title = editorArticle.title;
+    article.description = editorArticle.description;
+    article.body = editorArticle.body;
+    article.tagList = editorArticle.tagList;
+  });
+}
 async function handleCreateArticle() {
   try {
     const { data } = await createArticle(article);
@@ -79,6 +90,25 @@ async function handleCreateArticle() {
     console.log(error);
   }
 }
+
+async function handleUpdateArticle() {
+  try {
+    const { data } = await updateArticle(slug.value, article);
+    const { article: newArticle } = data;
+    router.push({ name: 'Article', params: { slug: newArticle.slug } });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function handleOperateArticle() {
+  if (slug.value) {
+    handleUpdateArticle();
+  } else {
+    handleCreateArticle;
+  }
+}
+
 const newTag = ref('');
 function handleAddTag() {
   article.tagList.push(newTag.value.trim());

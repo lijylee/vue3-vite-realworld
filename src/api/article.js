@@ -25,3 +25,9 @@ export function createArticle(article) {
 export function deleteArticle(slug) {
   return request.delete(`/articles/${slug}`);
 }
+
+export function updateArticle(slug, article) {
+  return request.put(`/articles/${slug}`, {
+    article
+  });
+}
