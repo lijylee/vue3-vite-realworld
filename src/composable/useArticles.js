@@ -3,7 +3,7 @@ import { getArticles, getFeedArticles } from '@/api/article.js';
 
 export function useArticles({ tag, feed, page, limit, feedDisable }) {
   const articles = ref([]);
-  const articlesCount = ref(0);
+  const totalPage = ref(0);
   const fetchArticles = async (params) => {
     try {
       const { data } = await getArticles(params);
@@ -11,7 +11,7 @@ export function useArticles({ tag, feed, page, limit, feedDisable }) {
       articles.value.forEach((element) => {
         element.disabled = false;
       });
-      articlesCount.value = data.articlesCount;
+      totalPage.value = Math.ceil(data.articlesCount / limit.value);
     } catch (error) {
       console.log(error);
     }
@@ -24,7 +24,7 @@ export function useArticles({ tag, feed, page, limit, feedDisable }) {
       articles.value.forEach((element) => {
         element.disabled = false;
       });
-      articlesCount.value = data.articlesCount;
+      totalPage.value = Math.ceil(data.articlesCount / limit.value);
     } catch (error) {
       console.log(error);
     }
@@ -45,15 +45,16 @@ export function useArticles({ tag, feed, page, limit, feedDisable }) {
       feedDisable.value = false;
     });
   };
+  doFetchArticles();
 
-  watch(feed, doFetchArticles, { immediate: true });
-  watch(page, doFetchArticles, { immediate: true });
-  watch(tag, doFetchArticles, { immediate: true });
-  watch(limit, doFetchArticles, { immediate: true });
+  watch(feed, doFetchArticles);
+  watch(page, doFetchArticles);
+  watch(tag, doFetchArticles);
+  watch(limit, doFetchArticles);
 
   return {
     articles,
-    articlesCount
+    totalPage
   };
 }
 

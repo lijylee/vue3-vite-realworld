@@ -113,23 +113,25 @@ import { getTags } from '@/api/tag.js';
 import { postFavorites, deleteFavorites } from '@/api/favorites.js';
 
 const route = useRoute();
-const feedDisable = ref(false);
+
 const tags = ref([]);
 getTags().then(({ data }) => {
   tags.value = data.tags;
 });
+
+const feedDisable = ref(false);
 const tag = computed(() => route.query.tag || undefined);
 const feed = computed(() => route.query.feed || 'GlobalFeed');
 const page = computed(() => Number(route.query.page) || 1);
 const limit = computed(() => Number(route.query.limit) || 10);
-const { articles, articlesCount } = useArticles({
+const { articles, totalPage } = useArticles({
   tag,
   feed,
   page,
   limit,
   feedDisable,
 });
-const totalPage = computed(() => Math.ceil(articlesCount.value / limit.value));
+
 const handleFavorite = async (article) => {
   const index = articles.value.findIndex((item) => item === article);
   articles.value[index].disabled = true;
