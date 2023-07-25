@@ -18,8 +18,13 @@ const updateUser = user => {
   });
 };
 
+const getCurrentUser = () => {
+  return request.get('/user');
+};
+
 export {
   login,
   register,
-  updateUser
+  updateUser,
+  getCurrentUser
 };
