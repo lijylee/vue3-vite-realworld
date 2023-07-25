@@ -1,8 +1,8 @@
 <template>
   <div class="article-meta">
-    <a href>
+    <router-link :to="{name:'Profile',params:{username:article.author.username}}">
       <img :src="article.author.image" />
-    </a>
+    </router-link>
     <div class="info">
       <router-link
         :to="{name:'Profile',params:{username:article.author.username}}"

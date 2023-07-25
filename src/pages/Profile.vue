@@ -22,56 +22,39 @@
           <div class="articles-toggle">
             <ul class="nav nav-pills outline-active">
               <li class="nav-item">
-                <a class="nav-link active" href>My Articles</a>
+                <router-link
+                  class="nav-link"
+                  :class="{active:myArticleActive}"
+                  :to="{name:'Profile',params:{'username':username},query:{tab:'my'}}"
+                >My Articles</router-link>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href>Favorited Articles</a>
+                <router-link
+                  class="nav-link"
+                  :class="{active:!myArticleActive}"
+                  :to="{name:'Profile',params:{'username':username},query:{tab:'favorite'}}"
+                >Favorited Articles</router-link>
               </li>
             </ul>
           </div>
-
-          <div class="article-preview">
-            <div class="article-meta">
-              <a href>
-                <img src="http://i.imgur.com/Qr71crq.jpg" />
-              </a>
+          <div class="article-meta">
+            <div class="article-preview" v-for="article in articles">
+              <router-link :to="{name:'Profile',params:{username:article.author.username}}">
+                <img :src="article.author.image" />
+              </router-link>
               <div class="info">
-                <a href class="author">Eric Simons</a>
-                <span class="date">January 20th</span>
+                <router-link
+                  :to="{name:'Profile',params:{username:article.author.username}}"
+                  class="author"
+                >{{article.author.username}}</router-link>
+                <span class="date">{{dateFormat(article.updatedAt)}}</span>
               </div>
-              <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                <i class="ion-heart"></i> 29
-              </button>
+              <router-link :to="{name:'Article',params:{slug:article.slug}}" class="preview-link">
+                <h1>{{ article.title }}</h1>
+                <p>{{ article.description }}</p>
+                <span>Read more...</span>
+              </router-link>
             </div>
-            <a href class="preview-link">
-              <h1>How to build webapps that scale</h1>
-              <p>This is the description for the post.</p>
-              <span>Read more...</span>
-            </a>
-          </div>
-
-          <div class="article-preview">
-            <div class="article-meta">
-              <a href>
-                <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-              </a>
-              <div class="info">
-                <a href class="author">Albert Pai</a>
-                <span class="date">January 20th</span>
-              </div>
-              <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                <i class="ion-heart"></i> 32
-              </button>
-            </div>
-            <a href class="preview-link">
-              <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-              <p>This is the description for the post.</p>
-              <span>Read more...</span>
-              <ul class="tag-list">
-                <li class="tag-default tag-pill tag-outline">Music</li>
-                <li class="tag-default tag-pill tag-outline">Song</li>
-              </ul>
-            </a>
           </div>
         </div>
       </div>
@@ -80,10 +63,12 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useProfile } from '@/composable/useProfile';
+import { getArticles } from '@/api/article.js';
 import { getUserFromStorage } from '@/utils/storage';
+import { dateFormat } from '@/utils/format.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -100,6 +85,40 @@ const handleEditFollow = () => {
     fn(username.value);
   }
 };
+
+const myArticleActive = ref(true);
+const articles = ref([]);
+async function handleMyArticle() {
+  try {
+    const { data } = await getArticles({ author: username.value });
+    articles.value = data.articles;
+    myArticleActive.value = true;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function handleFavoritedArticle() {
+  try {
+    const { data } = await getArticles({ favorited: username.value });
+    articles.value = data.articles;
+    myArticleActive.value = false;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+watch(
+  () => route.query.tab,
+  () => {
+    if (route.query.tab === 'favorite') {
+      handleFavoritedArticle();
+    } else {
+      handleMyArticle();
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
