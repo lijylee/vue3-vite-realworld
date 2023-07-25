@@ -45,49 +45,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { getUserFromStorage } from '@/utils/storage.js';
 import { dateFormat } from '@/utils/format.js';
-import { getComments, createComment, deleteComment } from '@/api/comment.js';
+import useComment from '@/composable/useComment.js';
 const { slug } = defineProps(['slug']);
 
 const user = getUserFromStorage();
 const userImage = user?.image;
 
-const comments = ref([]);
+const {
+  comment,
+  comments,
+  handleGetComments,
+  handleCreateComment,
+  handleDeleteComment,
+} = useComment();
+
 // 获取文章所有评论
 handleGetComments(slug);
-
-async function handleGetComments(slug) {
-  try {
-    const { data } = await getComments(slug);
-    comments.value = data.comments;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-const comment = ref('');
-async function handleCreateComment(slug) {
-  try {
-    const { data } = await createComment(slug, comment.value);
-    const { comment: resComment } = data;
-    comments.value.push(resComment);
-    comment.value = '';
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function handleDeleteComment(slug, id) {
-  try {
-    await deleteComment(slug, id);
-    const index = comments.value.findIndex((item) => item.id === id);
-    comments.value.splice(index, 1);
-  } catch (error) {
-    console.log(error);
-  }
-}
 </script>
 
 <style scoped>
